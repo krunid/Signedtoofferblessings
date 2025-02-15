@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบถวายพระพร</title>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: left;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: 'Kanit', sans-serif;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .popup img {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        .popup button {
+            background-color: #f44336;
+        }
+        .popup button:hover {
+            background-color: #d32f2f;
+        }
+        .image-options {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .image-options img {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .image-options img.selected {
+            border-color: #4CAF50;
+        }
+        .developer-info {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .developer-info a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .developer-info a:hover {
+            text-decoration: underline;
+        }
+        .data-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: left;
+            max-width: 600px;
+            width: 90%;
+        }
+        .data-popup table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-popup th, .data-popup td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .data-popup th {
+            background-color: #f4f4f4;
+        }
+        .data-popup img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+        }
+        .data-button-container {
+            text-align: right;
+            margin-top: 10px;
+        }
+        .table-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>ระบบถวายพระพร</h1>
+    <form id="blessingForm">
+        <label for="name">ชื่อ-นามสกุล:</label>
+        <input type="text" id="name" name="name" required placeholder="กรุณากรอกชื่อ-นามสกุล">
+
+        <label for="message">เลือกข้อความถวายพระพร:</label>
+        <select id="message" name="message" required>
+            <option value="ขอพระองค์ทรงพระเจริญยิ่งยืนนาน">ขอพระองค์ทรงพระเจริญยิ่งยืนนาน</option>
+            <option value="ขอพระองค์ทรงมีพระพลานามัยที่แข็งแรง">ขอพระองค์ทรงมีพระพลานามัยที่แข็งแรง</option>
+            <option value="ขอพระองค์ทรงมีพระบรมราชานุภาพยิ่งใหญ่">ขอพระองค์ทรงมีพระบรมราชานุภาพยิ่งใหญ่</option>
+            <option value="ขอพระองค์ทรงมีพระปัญญาญาณอันล้ำเลิศ">ขอพระองค์ทรงมีพระปัญญาญาณอันล้ำเลิศ</option>
+            <option value="ขอพระองค์ทรงมีพระเมตตาต่อปวงชน">ขอพระองค์ทรงมีพระเมตตาต่อปวงชน</option>
+        </select>
+
+        <label>เลือกรูปภาพถวายพระพร:</label>
+        <div class="image-options">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBlHJ3kEs6rfElrXNn4PVDdfoK5pCnCEXuz4r9Xq2HVXpDCsjhTey-6nilPA4JW6yRWIs&usqp=CAU" alt="พระพันปีหลวง" data-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBlHJ3kEs6rfElrXNn4PVDdfoK5pCnCEXuz4r9Xq2HVXpDCsjhTey-6nilPA4JW6yRWIs&usqp=CAU" onclick="selectImage(this)">
+            <img src="https://king.kapook.com/kingrama10/images/profile10-sec7.png" alt="ร.10" data-image="https://via.placeholder.com/150?text=ร.10" onclick="selectImage(this)">
+            <img src="https://image.bangkokbiznews.com/image/kt/media/image/fileupload1/source/159108578788.jpg?1591097708522" alt="พระราชินี" data-image="https://image.bangkokbiznews.com/image/kt/media/image/fileupload1/source/159108578788.jpg?1591097708522" onclick="selectImage(this)">
+            <img src="https://i0.wp.com/www.xinhuathai.com/wp-content/uploads/2019/09/XxjinmC007014_20190925_CBMFN0A002.jpg?resize=400%2C500&ssl=1" alt="พระเทพ" data-image="https://i0.wp.com/www.xinhuathai.com/wp-content/uploads/2019/09/XxjinmC007014_20190925_CBMFN0A002.jpg?resize=400%2C500&ssl=1" onclick="selectImage(this)">
+            <img src="https://today-obs.line-scdn.net/0h7VNYfrXRaHlzIHq989YXLkt2ZAhARnJwURIkG14hZh5cDConTBI7GlIoN1UOEyZ8U0d0FgJ3YklcGS0sSA/w580" alt="เจ้าฟ้าจุฬาภรณวลัยลักษณ์" data-image="https://today-obs.line-scdn.net/0h7VNYfrXRaHlzIHq989YXLkt2ZAhARnJwURIkG14hZh5cDConTBI7GlIoN1UOEyZ8U0d0FgJ3YklcGS0sSA/w580" onclick="selectImage(this)">
+        </div>
+
+        <button type="submit">ส่งถวายพระพร</button>
+
+        <!-- ปุ่มข้อมูลลงนาม -->
+        <div class="data-button-container">
+            <button type="button" onclick="showDataPopup()">ข้อมูลถวายพระพร</button>
+        </div>
+    </form>
+
+    <!-- Popup สำหรับแสดงข้อมูลถวายพระพร -->
+    <div class="data-popup" id="dataPopup">
+        <h2>ข้อมูลถวายพระพรทั้งหมด</h2>
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>ชื่อ</th>
+                        <th>ข้อความ</th>
+                        <th>รูปภาพ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ข้อมูลจะถูกเพิ่มที่นี่โดย JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <button onclick="closeDataPopup()" style="margin-top: 20px;">ปิด</button>
+    </div>
+
+    <!-- Popup สำหรับแสดงผลการถวายพระพร -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <img id="popupImage" src="" alt="รูปภาพถวายพระพร">
+        <h2>ข้อความถวายพระพร</h2>
+        <p id="popupName"></p>
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">ปิด</button>
+    </div>
+
+    <!-- ผู้พัฒนา -->
+    <div class="developer-info">
+        พัฒนาโดย <a href="https://github.com/yourusername" target="_blank">Your Name</a>
+    </div>
+
+    <script>
+        let selectedImage = '';
+
+        function selectImage(imgElement) {
+            const images = document.querySelectorAll('.image-options img');
+            images.forEach(img => img.classList.remove('selected'));
+            imgElement.classList.add('selected');
+            selectedImage = imgElement.getAttribute('data-image');
+        }
+
+        function resetForm() {
+            document.getElementById('blessingForm').reset();
+            const images = document.querySelectorAll('.image-options img');
+            images.forEach(img => img.classList.remove('selected'));
+            selectedImage = '';
+        }
+
+        function saveToLocalStorage(data) {
+            let blessings = JSON.parse(localStorage.getItem('blessings')) || [];
+            blessings.push(data);
+            localStorage.setItem('blessings', JSON.stringify(blessings));
+        }
+
+        function loadFromLocalStorage() {
+            return JSON.parse(localStorage.getItem('blessings')) || [];
+        }
+
+        function showDataPopup() {
+            const dataPopup = document.getElementById('dataPopup');
+            const dataTableBody = document.querySelector('#dataTable tbody');
+            const blessings = loadFromLocalStorage();
+
+            // เรียงข้อมูลจากล่าสุด
+            blessings.reverse();
+
+            dataTableBody.innerHTML = '';
+
+            blessings.forEach(blessing => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${blessing.name}</td>
+                    <td>${blessing.message}</td>
+                    <td><img src="${blessing.image}" alt="รูปภาพ"></td>
+                `;
+                dataTableBody.appendChild(row);
+            });
+
+            dataPopup.style.display = 'block';
+        }
+
+        function closeDataPopup() {
+            document.getElementById('dataPopup').style.display = 'none';
+        }
+
+        document.getElementById('blessingForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('message').value;
+
+            if (!selectedImage) {
+                alert('กรุณาเลือกรูปภาพถวายพระพร');
+                return;
+            }
+
+            const blessingData = {
+                name: name,
+                message: message,
+                image: selectedImage
+            };
+
+            saveToLocalStorage(blessingData);
+
+            // แสดงข้อมูลใน popup
+            document.getElementById('popupName').innerText = `ชื่อ: ${name}`;
+            document.getElementById('popupMessage').innerText = `ข้อความ: ${message}`;
+            document.getElementById('popupImage').src = selectedImage;
+            
+            // แสดง popup และ overlay
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        });
+
+        function closePopup() {
+            // ซ่อน popup และ overlay
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            // ล้างฟอร์ม
+            resetForm();
+        }
+    </script>
+</body>
+</html>
