@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบถวายพระพร</title>
+    <title>ระบบลงนามถวายพระพร</title>
     <style>
         body {
             font-family: 'Kanit', sans-serif;
@@ -31,14 +31,20 @@
             font-weight: bold;
             display: block;
             margin-top: 10px;
+            color: #555;
         }
-        input, textarea, select {
+        input, select {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-family: 'Kanit', sans-serif;
+            font-size: 1em;
+        }
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            outline: none;
         }
         button {
             background-color: #4CAF50;
@@ -50,6 +56,7 @@
             font-family: 'Kanit', sans-serif;
             font-size: 1em;
             margin-top: 20px;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #45a049;
@@ -158,11 +165,40 @@
             max-height: 300px;
             overflow-y: auto;
         }
+        .alert-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .alert-popup button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .alert-popup button:hover {
+            background-color: #45a049;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>ระบบถวายพระพร</h1>
+    <h1>ระบบลงนามถวายพระพร</h1>
     <form id="blessingForm">
         <label for="name">ชื่อ-นามสกุล:</label>
         <input type="text" id="name" name="name" required placeholder="กรุณากรอกชื่อ-นามสกุล">
@@ -185,17 +221,17 @@
             <img src="https://today-obs.line-scdn.net/0h7VNYfrXRaHlzIHq989YXLkt2ZAhARnJwURIkG14hZh5cDConTBI7GlIoN1UOEyZ8U0d0FgJ3YklcGS0sSA/w580" alt="เจ้าฟ้าจุฬาภรณวลัยลักษณ์" data-image="https://today-obs.line-scdn.net/0h7VNYfrXRaHlzIHq989YXLkt2ZAhARnJwURIkG14hZh5cDConTBI7GlIoN1UOEyZ8U0d0FgJ3YklcGS0sSA/w580" onclick="selectImage(this)">
         </div>
 
-        <button type="submit">ส่งถวายพระพร</button>
+        <button type="submit">ลงนาม</button>
 
         <!-- ปุ่มข้อมูลลงนาม -->
         <div class="data-button-container">
-            <button type="button" onclick="showDataPopup()">ข้อมูลถวายพระพร</button>
+            <button type="button" onclick="showDataPopup()">ข้อมูลลงนาม</button>
         </div>
     </form>
 
-    <!-- Popup สำหรับแสดงข้อมูลถวายพระพร -->
+    <!-- Popup สำหรับแสดงข้อมูลลงนาม -->
     <div class="data-popup" id="dataPopup">
-        <h2>ข้อมูลถวายพระพรทั้งหมด</h2>
+        <h2>ข้อมูลลงนามทั้งหมด</h2>
         <div class="table-container">
             <table id="dataTable">
                 <thead>
@@ -213,7 +249,7 @@
         <button onclick="closeDataPopup()" style="margin-top: 20px;">ปิด</button>
     </div>
 
-    <!-- Popup สำหรับแสดงผลการถวายพระพร -->
+    <!-- Popup สำหรับแสดงผลการลงนาม -->
     <div class="overlay" id="overlay"></div>
     <div class="popup" id="popup">
         <img id="popupImage" src="" alt="รูปภาพถวายพระพร">
@@ -221,6 +257,12 @@
         <p id="popupName"></p>
         <p id="popupMessage"></p>
         <button onclick="closePopup()">ปิด</button>
+    </div>
+
+    <!-- Popup สำหรับแจ้งเตือน -->
+    <div class="alert-popup" id="alertPopup">
+        <p id="alertMessage"></p>
+        <button onclick="closeAlertPopup()">ตกลง</button>
     </div>
 
     <!-- ผู้พัฒนา -->
@@ -282,6 +324,17 @@
             document.getElementById('dataPopup').style.display = 'none';
         }
 
+        function showAlert(message) {
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertPopup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeAlertPopup() {
+            document.getElementById('alertPopup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
         document.getElementById('blessingForm').addEventListener('submit', function(event) {
             event.preventDefault();
             
@@ -289,7 +342,7 @@
             const message = document.getElementById('message').value;
 
             if (!selectedImage) {
-                alert('กรุณาเลือกรูปภาพถวายพระพร');
+                showAlert('กรุณาเลือกรูปภาพถวายพระพร');
                 return;
             }
 
